@@ -22,6 +22,10 @@ Im new to spring boot and this is my *first project*. Im open for suggestions an
 
 - HTML, CSS, JS Frontend
 
+## How to use
+
+- Add your cloudinary details like api key and api secret onto application.yaml
+
 ## Pending Work
 
 - Emailing Service
