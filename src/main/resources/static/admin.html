@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sofi Digital Studio™ - Admin</title>
+    <link rel="shortcut icon" href="/logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --platinum: #e6e8e6;
+            --oxford-blue: #0b132b;
+            --vista-blue: #8390fa;
+            --dim-gray: #6a706e;
+            --danger: #e05252;
+            --success: #52c077;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #f0f0f0;
+            color: var(--oxford-blue);
+            min-height: 100vh;
+        }
+
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--oxford-blue);
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .login-box h2 { margin-bottom: 8px; font-size: 1.5rem; }
+
+        .login-box p {
+            color: var(--dim-gray);
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: var(--vista-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .login-box button:hover { background: var(--oxford-blue); }
+
+        .login-error {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .dashboard { display: none; }
+
+        .topbar {
+            background: var(--oxford-blue);
+            color: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar h1 { font-size: 1.2rem; }
+
+        .topbar button {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        .topbar button:hover { background: rgba(255,255,255,0.1); }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid #eee;
+            padding: 0 32px;
+        }
+
+        .tab-btn {
+            padding: 16px 24px;
+            border: none;
+            background: transparent;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--dim-gray);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn.active {
+            color: var(--vista-blue);
+            border-bottom-color: var(--vista-blue);
+        }
+
+        .tab-content { display: none; padding: 32px; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .card h3 { margin-bottom: 16px; font-size: 1.1rem; }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .form-row input[type="text"],
+        .form-row input[type="file"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .btn-primary { background: var(--vista-blue); color: white; }
+        .btn-primary:hover { background: var(--oxford-blue); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { opacity: 0.85; }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .image-item {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-item-info {
+            padding: 8px 10px;
+            font-size: 0.8rem;
+            color: var(--dim-gray);
+        }
+
+        .image-item-actions {
+            display: flex;
+            gap: 6px;
+            padding: 8px 10px;
+        }
+
+        .image-item-actions button {
+            flex: 1;
+            padding: 6px;
+            font-size: 0.78rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: white;
+        }
+
+        .image-item-actions .edit-btn { background: var(--vista-blue); }
+        .image-item-actions .delete-btn { background: var(--danger); }
+
+        .table-wrapper { overflow-x: auto; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+
+        th {
+            background: var(--oxford-blue);
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        td { padding: 12px 16px; border-bottom: 1px solid #eee; }
+
+        tr:hover td { background: #f9f9f9; }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .status-PENDING { background: #fff3cd; color: #856404; }
+        .status-CONFIRMED { background: #d1f5e0; color: #155724; }
+        .status-CANCELLED { background: #f8d7da; color: #721c24; }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 9999;
+            font-size: 0.9rem;
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .modal h3 { margin-bottom: 16px; }
+
+        .modal input {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+
+        .uploading-text {
+            color: var(--dim-gray);
+            font-size: 0.9rem;
+            display: none;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrapper" id="loginWrapper">
+    <div class="login-box">
+        <h2>Admin Login</h2>
+        <p>Sofi Digital Studio™ Dashboard</p>
+        <p class="login-error" id="loginError">Invalid username or password.</p>
+        <input type="text" id="loginUsername" placeholder="Username" />
+        <input type="password" id="loginPassword" placeholder="Password" />
+        <button onclick="login()">Login</button>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+
+    <div class="topbar">
+        <h1>Sofi Digital Studio™ — Admin</h1>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('gallery', this)">Gallery</button>
+        <button class="tab-btn" onclick="switchTab('bookings', this)">Bookings</button>
+    </div>
+
+    <!-- GALLERY TAB -->
+    <div class="tab-content active" id="tab-gallery">
+
+        <div class="card">
+            <h3>Upload New Image</h3>
+            <div class="form-row">
+                <input type="file" id="newImageFile" accept="image/*" />
+                <input type="text" id="newImageCategory" placeholder="Category (e.g. Ceremony)" />
+                <button class="btn btn-primary" onclick="addImage()">Upload Image</button>
+            </div>
+            <p class="uploading-text" id="uploadingText">⏳ Uploading to Cloudinary, please wait...</p>
+        </div>
+
+        <div class="card">
+            <h3>All Images</h3>
+            <div class="image-grid" id="imageGrid">
+                <p>Loading...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BOOKINGS TAB -->
+    <div class="tab-content" id="tab-bookings">
+        <div class="card">
+            <h3>All Bookings</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Description</th>
+                        <th>Days</th>
+                        <th>Status</th>
+                        <th>Change Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="bookingsTable">
+                    <tr><td colspan="7">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- EDIT IMAGE MODAL -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h3>Edit Image Category</h3>
+        <input type="text" id="editImageCategory" placeholder="Category" />
+        <input type="hidden" id="editImageId" />
+        <input type="hidden" id="editImageUrl" />
+        <div class="modal-actions">
+            <button class="btn" onclick="closeEditModal()" style="background:#eee;color:#333;">Cancel</button>
+            <button class="btn btn-primary" onclick="saveEditImage()">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showToast(message, success = true) {
+        const toast = document.createElement('div');
+        toast.textContent = message;
+        toast.className = 'toast ' + (success ? 'success' : 'error');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    function getAuthHeader() {
+        return 'Basic ' + btoa(sessionStorage.getItem('user') + ':' + sessionStorage.getItem('pass'));
+    }
+
+    function getJsonHeaders() {
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': getAuthHeader()
+        };
+    }
+
+    // ── AUTH ──
+    async function login() {
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+        const errorEl = document.getElementById('loginError');
+
+        if (!username || !password) {
+            errorEl.style.display = 'block';
+            errorEl.textContent = 'Please enter username and password.';
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/admin/check', {
+                method: 'GET',
+                headers: { 'Authorization': 'Basic ' + btoa(username + ':' + password) }
+            });
+
+            if (res.ok) {
+                sessionStorage.setItem('user', username);
+                sessionStorage.setItem('pass', password);
+                document.getElementById('loginWrapper').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadImages();
+                loadBookings();
+            } else {
+                errorEl.style.display = 'block';
+                errorEl.textContent = 'Invalid username or password.';
+            }
+        } catch (e) {
+            showToast('Connection error.', false);
+        }
+    }
+
+    function logout() {
+        sessionStorage.clear();
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('loginWrapper').style.display = 'flex';
+        document.getElementById('loginUsername').value = '';
+        document.getElementById('loginPassword').value = '';
+    }
+
+    // ── TABS ──
+    function switchTab(name, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    // ── GALLERY ──
+    async function loadImages() {
+        try {
+            const res = await fetch('/api/gallery');
+            const images = await res.json();
+            const grid = document.getElementById('imageGrid');
+
+            if (images.length === 0) {
+                grid.innerHTML = '<p>No images yet.</p>';
+                return;
+            }
+
+            grid.innerHTML = '';
+            images.forEach(img => {
+                grid.innerHTML += `
+                    <div class="image-item">
+                        <img src="${img.imageUrl}" alt="${img.category}" onerror="this.src='/logo.png'" />
+                        <div class="image-item-info">${img.category}</div>
+                        <div class="image-item-actions">
+                            <button class="edit-btn" onclick="openEditModal(${img.id}, '${img.imageUrl}', '${img.category}')">Edit</button>
+                            <button class="delete-btn" onclick="deleteImage(${img.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+        } catch (e) {
+            showToast('Failed to load images.', false);
+        }
+    }
+
+    async function addImage() {
+        const file = document.getElementById('newImageFile').files[0];
+        const category = document.getElementById('newImageCategory').value.trim();
+        const uploadingText = document.getElementById('uploadingText');
+
+        if (!file || !category) {
+            showToast('Please select a file and enter a category.', false);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('category', category);
+
+        uploadingText.style.display = 'block';
+
+        try {
+            const res = await fetch('/api/admin/gallery', {
+                method: 'POST',
+                headers: { 'Authorization': getAuthHeader() },
+                body: formData
+            });
+
+            uploadingText.style.display = 'none';
+
+            if (res.ok) {
+                showToast('Image uploaded successfully!');
+                document.getElementById('newImageFile').value = '';
+                document.getElementById('newImageCategory').value = '';
+                loadImages();
+            } else {
+                showToast('Failed to upload image.', false);
+            }
+        } catch (e) {
+            uploadingText.style.display = 'none';
+            showToast('Connection error.', false);
+        }
+    }
+
+    async function deleteImage(id) {
+        if (!confirm('Are you sure you want to delete this image?')) return;
+
+        try {
+            const res = await fetch(`/api/admin/gallery/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': getAuthHeader() }
+            });
+
+            if (res.ok) {
+                showToast('Image deleted.');
+                loadImages();
+            } else {
+                showToast('Failed to delete image.', false);
+            }
+        } catch (e) {
+            showToast('Connection error.', false);
+        }
+    }
+
+    function openEditModal(id, imageUrl, category) {
+        document.getElementById('editImageId').value = id;
+        document.getElementById('editImageUrl').value = imageUrl;
+        document.getElementById('editImageCategory').value = category;
+        document.getElementById('editModal').classList.add('open');
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').classList.remove('open');
+    }
+
+    async function saveEditImage() {
+        const id = document.getElementById('editImageId').value;
+        const imageUrl = document.getElementById('editImageUrl').value;
+        const category = document.getElementById('editImageCategory').value.trim();
+
+        if (!category) {
+            showToast('Please enter a category.', false);
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/admin/gallery/${id}`, {
+                method: 'PUT',
+                headers: getJsonHeaders(),
+                body: JSON.stringify({ imageUrl, category })
+            });
+
+            if (res.ok) {
+                showToast('Image updated.');
+                closeEditModal();
+                loadImages();
+            } else {
+                showToast('Failed to update image.', false);
+            }
+        } catch (e) {
+            showToast('Connection error.', false);
+        }
+    }
+
+    // ── BOOKINGS ──
+    async function loadBookings() {
+        try {
+            const res = await fetch('/api/admin/bookings', {
+                headers: { 'Authorization': getAuthHeader() }
+            });
+            const bookings = await res.json();
+            const tbody = document.getElementById('bookingsTable');
+
+            if (bookings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">No bookings yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            bookings.forEach(b => {
+                const days = b.days ? b.days.map(d => d.date).join(', ') : '-';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${b.name}</td>
+                        <td>${b.email}</td>
+                        <td>${b.phone}</td>
+                        <td>${b.description || '-'}</td>
+                        <td>${days}</td>
+                        <td><span class="status-badge status-${b.status}">${b.status}</span></td>
+                        <td>
+                            <select onchange="updateStatus(${b.id}, this.value)" style="padding:6px;border-radius:4px;border:1px solid #ddd;font-family:Montserrat,sans-serif;">
+                                <option value="">Change status</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="CONFIRMED">Confirmed</option>
+                                <option value="CANCELLED">Cancelled</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (e) {
+            showToast('Failed to load bookings.', false);
+        }
+    }
+
+    async function updateStatus(id, status) {
+        if (!status) return;
+
+        try {
+            const res = await fetch(`/api/admin/bookings/${id}/status?status=${status}`, {
+                method: 'PUT',
+                headers: { 'Authorization': getAuthHeader() }
+            });
+
+            if (res.ok) {
+                showToast('Status updated.');
+                loadBookings();
+            } else {
+                showToast('Failed to update status.', false);
+            }
+        } catch (e) {
+            showToast('Connection error.', false);
+        }
+    }
+</script>
+
+</body>
+</html>

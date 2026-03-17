@@ -1,0 +1,13 @@
+package com.sofi.SofiStudio;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class SofiStudioApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

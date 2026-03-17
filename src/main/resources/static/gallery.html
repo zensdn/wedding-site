@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sofi Digital Studio™ - Gallery</title>
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/gallery.css">
+  <link rel="shortcut icon" href="/logo.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="navbar">
+  <img src="/logo.png" alt="">
+  <div class="navbar-brand">Sofi Digital Studio™</div>
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</nav>
+
+<div id="mobile-menu" class="mobile-menu">
+  <a href="/index.html">Home</a>
+  <a href="/gallery.html">Photos</a>
+  <a href="/booking.html">Booking</a>
+</div>
+
+<div class="gallery-wrapper">
+
+  <div class="categories" id="categories">
+    <!-- category buttons  -->
+  </div>
+
+  <div class="gallery" id="gallery">
+    <!-- photos  -->
+  </div>
+
+  <div id="lightbox" class="hidden">
+    <button class="close">&times;</button>
+    <button class="prev">&#10094;</button>
+    <img class="lightbox-img" src="" alt="Enlarged photo">
+    <button class="next">&#10095;</button>
+  </div>
+
+</div>
+
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('open');
+  }
+
+  let allImages = [];
+  let currentIndex = 0;
+
+  const galleryEl = document.getElementById('gallery');
+  const categoriesEl = document.getElementById('categories');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = lightbox.querySelector('.lightbox-img');
+
+  // Fetch all images from the API
+  async function loadGallery() {
+    try {
+      const response = await fetch('/api/gallery');
+      allImages = await response.json();
+
+      if (allImages.length === 0) {
+        galleryEl.innerHTML = '<p>No photos found.</p>';
+        return;
+      }
+
+      // Build unique category list from images
+      const categories = ['All', ...new Set(allImages.map(img => img.category))];
+      renderCategories(categories);
+      renderImages(allImages);
+
+    } catch (error) {
+      console.error('Failed to load gallery:', error);
+      galleryEl.innerHTML = '<p>Failed to load photos.</p>';
+    }
+  }
+
+  // Render category filter buttons
+  function renderCategories(categories) {
+    categoriesEl.innerHTML = '';
+    categories.forEach((cat, index) => {
+      const btn = document.createElement('button');
+      btn.textContent = cat;
+      btn.setAttribute('data-category', cat);
+      if (index === 0) btn.classList.add('active');
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.categories button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (cat === 'All') {
+          renderImages(allImages);
+        } else {
+          renderImages(allImages.filter(img => img.category === cat));
+        }
+      });
+      categoriesEl.appendChild(btn);
+    });
+  }
+
+  // Render image cards
+  function renderImages(images) {
+    galleryEl.innerHTML = '';
+    if (images.length === 0) {
+      galleryEl.innerHTML = '<p>No photos found.</p>';
+      return;
+    }
+    images.forEach((image, i) => {
+      const card = document.createElement('div');
+      card.classList.add('photo-card');
+
+      const img = document.createElement('img');
+      img.src = image.imageUrl;
+      img.alt = image.category;
+      img.loading = 'lazy';
+      img.style.cursor = 'pointer';
+      img.addEventListener('click', () => openLightbox(i, images));
+
+      card.appendChild(img);
+      galleryEl.appendChild(card);
+    });
+  }
+
+  // Lightbox
+  function openLightbox(index, images) {
+    currentIndex = index;
+    lightboxImg.src = images[currentIndex].imageUrl;
+    lightbox.classList.remove('hidden');
+    lightbox._images = images;
+  }
+
+  function closeLightbox() {
+    lightbox.classList.add('hidden');
+  }
+
+  function showPrev() {
+    const images = lightbox._images;
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    lightboxImg.src = images[currentIndex].imageUrl;
+  }
+
+  function showNext() {
+    const images = lightbox._images;
+    currentIndex = (currentIndex + 1) % images.length;
+    lightboxImg.src = images[currentIndex].imageUrl;
+  }
+
+  lightbox.querySelector('.close').addEventListener('click', closeLightbox);
+  lightbox.querySelector('.prev').addEventListener('click', showPrev);
+  lightbox.querySelector('.next').addEventListener('click', showNext);
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  // Swipe support
+  let startX = 0;
+  const threshold = 50;
+  lightbox.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+  lightbox.addEventListener('touchend', e => {
+    const diff = e.changedTouches[0].clientX - startX;
+    if (Math.abs(diff) > threshold) diff > 0 ? showPrev() : showNext();
+  });
+
+  loadGallery();
+</script>
+
+</body>
+</html>

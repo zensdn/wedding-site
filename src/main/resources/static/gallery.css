@@ -1,0 +1,105 @@
+.gallery-wrapper {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.categories {
+  text-align: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.categories button {
+  background: #eee;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 20px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+.categories button.active,
+.categories button:hover {
+  background: #222;
+  color: white;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.photo-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.photo-card img:hover {
+  transform: scale(1.02);
+}
+
+#lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+#lightbox.hidden {
+  display: none;
+}
+.lightbox-img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+#lightbox button {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 30px;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+#lightbox button:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+.close {
+  top: 20px;
+  right: 20px;
+}
+.prev {
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.next {
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+  #lightbox .prev,
+  #lightbox .next {
+    background: transparent;
+    font-size: 40px;
+  }
+  #lightbox .prev:hover,
+  #lightbox .next:hover {
+    background: transparent;
+  }
+}

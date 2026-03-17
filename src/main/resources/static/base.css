@@ -1,0 +1,101 @@
+:root {
+  --platinum: #e6e8e6;
+  --timberwolf: #ced0ce;
+  --oxford-blue: #0b132b;
+  --vista-blue: #8390fa;
+  --dim-gray: #6a706e;
+
+  --bg: var(--platinum);
+  --text: var(--oxford-blue);
+  --card-bg: var(--timberwolf);
+  --highlight: var(--vista-blue);
+  --button-hover: var(--dim-gray);
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  padding-top: 60px;
+  background: var(--platinum);
+  color: var(--oxford-blue);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--oxford-blue);
+  color: var(--platinum);
+  padding: 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(11, 19, 43, 0.5);
+  
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-size: clamp(1rem, 5vw, 1.5rem);
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger div {
+  width: 25px;
+  height: 3px;
+  background-color: var(--platinum);
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background: rgba(11, 19, 43, 0.7); 
+  backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 2px 0 12px rgba(11, 19, 43, 0.5);
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 4rem;
+  transition: left 0.3s ease;
+  z-index: 999;
+}
+
+.mobile-menu.open {
+  left: 0;
+}
+
+.mobile-menu a {
+  color: var(--timberwolf);
+  padding: 1rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--dim-gray);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.mobile-menu a:hover {
+  background: var(--vista-blue);
+  color: var(--platinum);
+}
+
+img{
+  width: auto;
+  height: 30px;
+}

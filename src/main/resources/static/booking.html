@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sofi Digital Studio™ - Booking</title>
+  <link rel="stylesheet" href="/base.css">
+  <link rel="stylesheet" href="/booking.css">
+  <link rel="shortcut icon" href="/logo.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="navbar">
+  <img src="/logo.png" alt="">
+  <div class="navbar-brand">Sofi Digital Studio™</div>
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</nav>
+
+<div id="mobile-menu" class="mobile-menu">
+  <a href="/index.html">Home</a>
+  <a href="/gallery.html">Photos</a>
+  <a href="/booking.html">Booking</a>
+</div>
+
+<div class="booking-container">
+  <h1 class="form-title">Booking Form</h1>
+  <p class="form-subtitle">Please fill out this form to book for your event(s).</p>
+
+  <div class="booking-form">
+
+    <div>
+      <label for="name">Name</label>
+      <input type="text" id="name" required placeholder="Enter your name" />
+    </div>
+
+    <div>
+      <label for="email">Email Address</label>
+      <input type="email" id="email" required placeholder="Enter your email" />
+    </div>
+
+    <div>
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" required placeholder="Enter your phone number" />
+    </div>
+
+    <div>
+      <label for="days">Number of Days</label>
+      <input type="number" id="days" min="1" max="10" required value="1" />
+    </div>
+
+    <div id="multi-day-fields"></div>
+
+    <div>
+      <label for="comments">Additional Comments</label>
+      <textarea id="comments" rows="4" placeholder="Any special requests or notes?"></textarea>
+    </div>
+
+    <div>
+      <button type="button" onclick="submitBooking()">Book Now</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('open');
+  }
+
+  const daysInput = document.getElementById('days');
+  const fieldsContainer = document.getElementById('multi-day-fields');
+
+  function showToast(message, success = true) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.className = 'toast ' + (success ? 'success' : 'error');
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 7000);
+  }
+
+  function createDayFields(index) {
+    return `
+        <div class="day-block fade-in">
+          <h3>Day ${index + 1}</h3>
+          <div class="day-grid">
+            <div>
+              <label for="day_${index}_date">Date</label>
+              <input type="date" id="day_${index}_date" required />
+            </div>
+            <div>
+              <label for="day_${index}_time">Time</label>
+              <input type="time" id="day_${index}_time" required />
+            </div>
+          </div>
+          <div>
+            <label for="day_${index}_event_type">Event Type</label>
+            <input type="text" id="day_${index}_event_type" placeholder="Eg: Wedding, Meeting" required />
+          </div>
+        </div>
+      `;
+  }
+
+  function renderFields() {
+    const count = parseInt(daysInput.value);
+    fieldsContainer.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      fieldsContainer.innerHTML += createDayFields(i);
+    }
+  }
+
+  async function submitBooking() {
+    // Collect basic fields
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const description = document.getElementById('comments').value.trim();
+    const count = parseInt(daysInput.value);
+
+    // Basic validation
+    if (!name || !email || !phone) {
+      showToast('Please fill in all required fields.', false);
+      return;
+    }
+
+    // Collect days as array of date strings (YYYY-MM-DD format)
+    const days = [];
+    for (let i = 0; i < count; i++) {
+      const date = document.getElementById(`day_${i}_date`).value;
+      if (!date) {
+        showToast('Please fill in all day fields.', false);
+        return;
+      }
+      days.push(date);
+    }
+
+    // Build the request body matching your BookingDto
+    const bookingData = {
+      name: name,
+      email: email,
+      phone: phone,
+      description: description,
+      days: days
+    };
+
+    // Send to your Spring Boot API
+    try {
+      const response = await fetch('/api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bookingData)
+      });
+
+      if (response.ok) {
+        showToast('Booking submitted successfully!', true);
+        // clear the form
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('comments').value = '';
+        daysInput.value = 1;
+        renderFields();
+      } else {
+        const error = await response.json();
+        showToast('Submission failed: ' + (error.message || 'Please try again.'), false);
+      }
+
+    } catch (error) {
+      console.error('Booking submission error:', error);
+      showToast('Something went wrong. Please try again.', false);
+    }
+  }
+
+  daysInput.addEventListener('input', renderFields);
+  window.addEventListener('DOMContentLoaded', renderFields);
+</script>
+
+</body>
+</html>
