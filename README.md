@@ -1,4 +1,4 @@
-# wedding-site
+# wedding-site (In Progress)
 
 A fullstack website created using spring boot for showcasing wedding images and also to accept booking requests which would be sent to the specified email.
 
@@ -33,5 +33,3 @@ Im new to spring boot and this is my *first project*. Im open for suggestions an
 - CORS config
 
 - Some major bugs to fix
-
-![Status](https://img.shields.io/badge/status-in_progress-orange)
