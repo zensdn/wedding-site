@@ -27,8 +27,8 @@ public class BookingController {
         return bookingService.createBooking(bookingdto);
     }
 
-    @PutMapping("/{id}/status")
-    public Booking updateBooking(@PathVariable Long id, @RequestParam BookingStatus bookingStatus) {
+    @PutMapping("/admin/bookings/{id}/status")
+    public Booking updateBooking(@PathVariable Long id, @RequestParam("status") BookingStatus bookingStatus) {
         return bookingService.updateStatus(id, bookingStatus);
     }
 

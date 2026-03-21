@@ -121,10 +121,15 @@
     const phone = document.getElementById('phone').value.trim();
     const description = document.getElementById('comments').value.trim();
     const count = parseInt(daysInput.value);
+    const submitBtn = document.querySelector('button[onclick="submitBooking()"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
 
     // Basic validation
     if (!name || !email || !phone) {
       showToast('Please fill in all required fields.', false);
+      submitBtn.disabled = false;  // add this
+      submitBtn.textContent = 'Book Now';  // add this
       return;
     }
 
@@ -134,6 +139,8 @@
       const date = document.getElementById(`day_${i}_date`).value;
       if (!date) {
         showToast('Please fill in all day fields.', false);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Book Now';
         return;
       }
       days.push(date);
@@ -170,11 +177,15 @@
       } else {
         const error = await response.json();
         showToast('Submission failed: ' + (error.message || 'Please try again.'), false);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Book Now';
       }
 
     } catch (error) {
       console.error('Booking submission error:', error);
       showToast('Something went wrong. Please try again.', false);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Book Now';
     }
   }
 
