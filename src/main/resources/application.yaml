@@ -1,4 +1,15 @@
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: muhmdzidan399@gmail.com
+    password: puld tylg hapa zolq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   application:
     name: sofistudio
   datasource:
@@ -6,10 +17,6 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password: sofistudio
-  h2:
-    console:
-      enabled: true
-      path: /h2
   jpa:
     hibernate:
       ddl-auto: update
@@ -25,3 +32,5 @@ cloudinary:
   cloud-name: Cloudinary_name
   api-key: Api_key
   api-secret: Api secret
+app:
+  admin-email: muhmdzidan399@gmail.com

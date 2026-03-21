@@ -17,6 +17,7 @@ import java.util.List;
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepo bookingRepo;
+    private final MailNotifService mailNotifService;
 
     @Override
     public List<Booking> getAllBookings() {
@@ -29,7 +30,13 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new RuntimeException("Booking Not Found with id: " + id));
 
         booking.setStatus(status);
-        return bookingRepo.save(booking);
+        Booking savedBooking = bookingRepo.save(booking);
+
+        if (status == BookingStatus.CONFIRMED) {
+            mailNotifService.sendBookingConfirmationToClient(savedBooking);
+        }
+
+        return savedBooking;
     }
 
     @Override
@@ -49,8 +56,10 @@ public class BookingServiceImpl implements BookingService {
             bookingDays.add(day);
         }
         booking.setDays(bookingDays);
+        Booking savedBooking = bookingRepo.save(booking);
+        mailNotifService.sendBookingConfirmation(savedBooking);
 
-        return bookingRepo.save(booking);
+        return savedBooking;
     }
 
     @Override
