@@ -34,6 +34,8 @@ public class BookingServiceImpl implements BookingService {
 
         if (status == BookingStatus.CONFIRMED) {
             mailNotifService.sendBookingConfirmationToClient(savedBooking);
+        } else if (status == BookingStatus.CANCELLED) {
+            mailNotifService.sendBookingCancellationToClient(savedBooking);
         }
 
         return savedBooking;

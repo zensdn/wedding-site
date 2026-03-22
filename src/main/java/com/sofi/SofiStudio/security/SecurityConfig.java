@@ -21,34 +21,36 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/gallery.html",
-                                "/booking.html", "/admin.html").permitAll()
+                        .requestMatchers("/", "/index.html", "/gallery", "/gallery.html",
+                                "/booking", "/booking.html", "/admin", "/admin.html").permitAll()
                         .requestMatchers("/api/gallery").permitAll()
                         .requestMatchers("/api/booking").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/*.css", "/*.js", "/*.png",
                                 "/*.webp", "/*.ico").permitAll()
                         .requestMatchers("/api/admin/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/admin")
-                        .loginProcessingUrl("/admin/login")
-                        .defaultSuccessUrl("/admin/dashboard")
+                        .loginProcessingUrl("/api/auth/login")
+                        .defaultSuccessUrl("/admin", true)
+                        .failureUrl("/admin?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/admin/logout")
+                        .logoutUrl("/api/auth/logout")
                         .logoutSuccessUrl("/admin")
                         .permitAll()
                 )
+                .rememberMe(remember -> remember
+                        .key("sofistudio-secret-key")
+                        .tokenValiditySeconds(604800)
+                )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**", "/h2-console/**")
+                        .ignoringRequestMatchers("/api/**")
                 )
                 .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
+                        .frameOptions(frame -> frame.disable())
                 );
 
         return http.build();

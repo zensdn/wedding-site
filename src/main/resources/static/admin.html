@@ -407,6 +407,7 @@
 </div>
 
 <script>
+    // ── UTILS ──
     function showToast(message, success = true) {
         const toast = document.createElement('div');
         toast.textContent = message;
@@ -415,16 +416,26 @@
         setTimeout(() => toast.remove(), 4000);
     }
 
-    function getAuthHeader() {
-        return 'Basic ' + btoa(sessionStorage.getItem('user') + ':' + sessionStorage.getItem('pass'));
+    function showDashboard() {
+        document.getElementById('loginWrapper').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        loadImages();
+        loadBookings();
     }
 
-    function getJsonHeaders() {
-        return {
-            'Content-Type': 'application/json',
-            'Authorization': getAuthHeader()
-        };
-    }
+    // ── AUTO LOGIN CHECK on page load ──
+    window.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const res = await fetch('/api/admin/check', {
+                credentials: 'include'
+            });
+            if (res.ok) {
+                showDashboard();
+            }
+        } catch (e) {
+            // not logged in, show login form
+        }
+    });
 
     // ── AUTH ──
     async function login() {
@@ -439,18 +450,22 @@
         }
 
         try {
-            const res = await fetch('/api/admin/check', {
-                method: 'GET',
-                headers: { 'Authorization': 'Basic ' + btoa(username + ':' + password) }
+            const formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('password', password);
+
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData,
+                credentials: 'include'
             });
 
-            if (res.ok) {
-                sessionStorage.setItem('user', username);
-                sessionStorage.setItem('pass', password);
-                document.getElementById('loginWrapper').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                loadImages();
-                loadBookings();
+            // verify session actually works after login
+            const check = await fetch('/api/admin/check', { credentials: 'include' });
+
+            if (check.ok) {
+                showDashboard();
             } else {
                 errorEl.style.display = 'block';
                 errorEl.textContent = 'Invalid username or password.';
@@ -460,8 +475,11 @@
         }
     }
 
-    function logout() {
-        sessionStorage.clear();
+    async function logout() {
+        await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
         document.getElementById('dashboard').style.display = 'none';
         document.getElementById('loginWrapper').style.display = 'flex';
         document.getElementById('loginUsername').value = '';
@@ -479,7 +497,7 @@
     // ── GALLERY ──
     async function loadImages() {
         try {
-            const res = await fetch('/api/gallery');
+            const res = await fetch('/api/gallery', { credentials: 'include' });
             const images = await res.json();
             const grid = document.getElementById('imageGrid');
 
@@ -525,7 +543,7 @@
         try {
             const res = await fetch('/api/admin/gallery', {
                 method: 'POST',
-                headers: { 'Authorization': getAuthHeader() },
+                credentials: 'include',
                 body: formData
             });
 
@@ -551,7 +569,7 @@
         try {
             const res = await fetch(`/api/admin/gallery/${id}`, {
                 method: 'DELETE',
-                headers: { 'Authorization': getAuthHeader() }
+                credentials: 'include'
             });
 
             if (res.ok) {
@@ -589,7 +607,8 @@
         try {
             const res = await fetch(`/api/admin/gallery/${id}`, {
                 method: 'PUT',
-                headers: getJsonHeaders(),
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ imageUrl, category })
             });
 
@@ -608,9 +627,7 @@
     // ── BOOKINGS ──
     async function loadBookings() {
         try {
-            const res = await fetch('/api/admin/bookings', {
-                headers: { 'Authorization': getAuthHeader() }
-            });
+            const res = await fetch('/api/admin/bookings', { credentials: 'include' });
             const bookings = await res.json();
             const tbody = document.getElementById('bookingsTable');
 
@@ -652,7 +669,7 @@
         try {
             const res = await fetch(`/api/admin/bookings/${id}/status?status=${status}`, {
                 method: 'PUT',
-                headers: { 'Authorization': getAuthHeader() }
+                credentials: 'include'
             });
 
             if (res.ok) {

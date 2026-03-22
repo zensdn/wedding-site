@@ -17,10 +17,9 @@ spring:
   application:
     name: sofistudio
   datasource:
-    url: jdbc:h2:mem:sofistudio
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: sofistudio
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -38,3 +37,5 @@ cloudinary:
   api-secret: ${CLOUDINARY_API_SECRET}
 app:
   admin-email: ${ADMIN_GMAIL}
+  admin-panel-username: ${ADMIN_PNL_USERNAME}
+  admin-panel-password: ${ADMIN_PNL_PASSWORD}

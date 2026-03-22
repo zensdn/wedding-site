@@ -1,14 +1,18 @@
-# wedding-site (In Progress)
+# wedding-site
 
 A fullstack website created using spring boot for showcasing wedding images and also to accept booking requests which would be sent to the specified email.
 
-Im new to spring boot and this is my *first project*. Im open for suggestions and advices.
+Im new to spring boot and this is my **first project**. I'm open for suggestions and advices.
+
+*Its named sofistudio because I made it for my dad's studio*
 
 ## Features
 
-- Admin panel which can be used for viewing and setting status of bookings and can perform CRUD operations on the gallery images
+- Admin panel to monitor and modify bookings, 
 
 - Clean, Color palleted UI
+
+- Email Service which sends confirmation, cancellation, received bookings 
 
 ## Tech Stack
 
@@ -16,26 +20,26 @@ Im new to spring boot and this is my *first project*. Im open for suggestions an
 
 - Spring Boot 
 
-- Postgres (not done yet)
+- Postgres 
 
 - Cloudinary for Image uploads
 
 - HTML, CSS, JS Frontend
 
-## How to use
+- JavaMailSender (Gmail SMTP)
 
-- Add your cloudinary details like api key and api secret onto application.yaml
+## Setup
 
-## Pending Work
+- **Inside `application.yaml`:**
+    - Gmail app password into password field under `mail:` 
+    - Add your personal mail id to `admin-email` under `app: `
+    - Add admin panel credentials there too 
+    - Add the gmail id which the service should use to `username` under `mail`
+    - Add your cloudinary details like api key, username and api secret
 
-- Emailing Service
+- Modify the message which should be sent through mail inside service/MailNotifServiceImpl
 
-- Gallery UI tweaks 
+- Feel free to edit the front-end however you want; change name, logo, hero image 
 
-- Switching from H2 to Postgres
+- Also change the project details in the artifact tag in pom.xml to your liking
 
-- Exception Handling
-
-- CORS config
-
-- Some major bugs to fix
